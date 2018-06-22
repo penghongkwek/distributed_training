@@ -1,0 +1,43 @@
+apiVersion: kubeflow.org/v1alpha1
+kind: TFJob
+metadata:
+  name: dist-mnist
+  namespace: mykubeflow
+spec:
+  replicaSpecs:
+  - replicas: 3
+    template:
+      spec:
+        containers:
+        - args:
+          - python
+          - /opt/mnist_replica.py
+          image: tf-mod-dist:1
+          name: tensorflow
+          volumeMounts:
+          - name: workdir
+            mountPath: "/tmp/tensorflow/"
+        volumes:
+        - name: workdir
+          hostPath:
+            # directory location on host
+            path: "/tmp/tensorflow"
+            # this field is optional
+            type: Directory
+        restartPolicy: OnFailure
+    tfReplicaType: WORKER
+  - replicas: 2
+    template:
+      spec:
+        containers:
+        - args:
+          - python
+          - /opt/mnist_replica.py
+          image: tf-mod-dist:1
+          name: tensorflow
+        restartPolicy: OnFailure
+    tfReplicaType: PS
+  terminationPolicy:
+    chief:
+      replicaIndex: 0
+      replicaName: WORKER

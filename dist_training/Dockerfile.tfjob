@@ -1,0 +1,9 @@
+FROM tensorflow/tensorflow:1.7.0-rc0
+RUN apt-get update
+RUN mkdir -p /opt
+RUN mkdir -p /mnt/data
+COPY mnist_replica.py /opt
+COPY launcher.py /opt
+RUN chmod u+x /opt/*
+RUN chmod u+x /mnt/*
+ENTRYPOINT ["/opt/launcher.py"]
