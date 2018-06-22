@@ -1,0 +1,3 @@
+Making a common training procedure
+
+Stopped at cnn - mnist
